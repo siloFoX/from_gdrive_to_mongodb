@@ -4,5 +4,6 @@ __pycache__/
 image/
 
 test_store_xlsx.py
+store_image.py
 
 *.ipynb

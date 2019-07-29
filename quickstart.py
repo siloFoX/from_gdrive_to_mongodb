@@ -90,26 +90,26 @@ def main():
             downloadFile(item['id'], item['name'])
             cwd = os.path.join(os.getcwd(), item['name'])
 
-            record_path, num_data = store_image(cwd, item['name'])
-            path_idx = 0
+            #record_path, num_data = store_image(cwd, item['name'])
+            #path_idx = 0
 
             xlsx = pd.ExcelFile(cwd)
             for sheet in xlsx.sheet_names :
                 PC = xlsx.parse(sheet)
-                is_exist = False
+                #is_exist = False
 
-                for column in PC.columns :
-                    if column == '사진' :
-                        is_exist = True
+                # for column in PC.columns :
+                #     if column == '사진' :
+                #         is_exist = True
 
-                if is_exist :
+                # if is_exist :
 
-                    for idx in range(num_data - 1) :
+                #     for idx in range(num_data - 1) :
 
-                        if type(PC['사진'][idx]) is float :
+                #         if type(PC['사진'][idx]) is float :
 
-                            PC['사진'][idx] = os.path.join(os.getcwd(), record_path[path_idx])
-                            path_idx += 1
+                #             PC['사진'][idx] = os.path.join(os.getcwd(), record_path[path_idx])
+                #             path_idx += 1
 
                 PC.to_csv(item['name'] + '_' + sheet + '.csv', encoding='utf-8', index=False)
 
