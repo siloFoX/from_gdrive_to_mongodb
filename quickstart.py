@@ -21,8 +21,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive']
 def auth():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
+    # created automatically when the authorization flow completes for the first time.
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -42,10 +41,6 @@ def auth():
 # 엑셀 파일 다운로드
 def downloadFile(file_id, filepath):
     service = build('drive', 'v3', credentials=auth())
-    #request = service.files().export_media(fileId=file_id, mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    #request = service.files().export_media(fileId=file_id,
-    #                                       mimeType='text/csv')
-
     request = service.files().get_media(fileId = file_id) # I fixed this point
     fh = io.BytesIO()
     downloader = MediaIoBaseDownload(fh, request)
@@ -90,27 +85,9 @@ def main():
             downloadFile(item['id'], item['name'])
             cwd = os.path.join(os.getcwd(), item['name'])
 
-            #record_path, num_data = store_image(cwd, item['name'])
-            #path_idx = 0
-
             xlsx = pd.ExcelFile(cwd)
             for sheet in xlsx.sheet_names :
                 PC = xlsx.parse(sheet)
-                #is_exist = False
-
-                # for column in PC.columns :
-                #     if column == '사진' :
-                #         is_exist = True
-
-                # if is_exist :
-
-                #     for idx in range(num_data - 1) :
-
-                #         if type(PC['사진'][idx]) is float :
-
-                #             PC['사진'][idx] = os.path.join(os.getcwd(), record_path[path_idx])
-                #             path_idx += 1
-
                 PC.to_csv(item['name'] + '_' + sheet + '.csv', encoding='utf-8', index=False)
 
             os.remove(cwd)

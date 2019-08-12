@@ -3,8 +3,7 @@ __pycache__/
 .ipynb_checkpoints/
 image/
 
-test_store_xlsx.py
 store_image.py
+test_store_xlsx.py
 
 *.ipynb
-
