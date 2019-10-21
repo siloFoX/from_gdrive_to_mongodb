@@ -63,44 +63,7 @@ def insertData(reader, collection):
                               {'$set' : list},
                               upsert=True) 
 
-
-def main():
-    """Shows basic usage of the Drive v3 API.
-    Prints the names and ids of the first 10 files the user has access to.
-    """
-
-    service = build('drive', 'v3', credentials=auth())
-
-    # Call the Drive v3 API
-    results = service.files().list(
-        pageSize=10, fields="nextPageToken, files(id, name)").execute()
-    items = results.get('files', [])
-
-    if not items:
-        print('No files found.')
-    else:
-        print('Files:')
-        for item in items:
-            print(u'{0} ({1})'.format(item['name'], item['id']))
-            downloadFile(item['id'], item['name'])
-            cwd = os.path.join(os.getcwd(), item['name'])
-
-            xlsx = pd.ExcelFile(cwd)
-            for sheet in xlsx.sheet_names :
-                PC = xlsx.parse(sheet)
-                PC.to_csv(sheet + '.csv', encoding='utf-8', index=False)
-
-            os.remove(cwd)
-
-
-    # << 몽고디비 연결 >>
-    client = MongoClient('localhost', 27017)
-    # localhost: ip주소
-    # 27017 : port 번호
-
-    # db 객체 할당
-    db = client['SmartProcess']
-
+def save_2_DB (db) :
     with open('store_image/collection_allocate.json', encoding = 'UTF-8') as f :
         collections = json.load(f)
 
@@ -127,6 +90,46 @@ def main():
 
             csvfile.close()
             os.remove(fullname)
+
+
+def main():
+    """Shows basic usage of the Drive v3 API.
+    Prints the names and ids of the first 10 files the user has access to.
+    """
+
+    # << 몽고디비 연결 >>
+    client = MongoClient('localhost', 27017)
+    # localhost: ip주소
+    # 27017 : port 번호
+
+    # db 객체 할당
+    db = client['SmartProcess']
+
+    service = build('drive', 'v3', credentials=auth())
+
+    # Call the Drive v3 API
+    results = service.files().list(
+        pageSize=10, fields="nextPageToken, files(id, name)").execute()
+    items = results.get('files', [])
+
+    if not items:
+        print('No files found.')
+    else:
+        print('Files:')
+        for item in items:
+            print(u'{0} ({1})'.format(item['name'], item['id']))
+            downloadFile(item['id'], item['name'])
+            cwd = os.path.join(os.getcwd(), item['name'])
+
+            xlsx = pd.ExcelFile(cwd)
+            for sheet in xlsx.sheet_names :
+                PC = xlsx.parse(sheet)
+                PC.to_csv(sheet + '.csv', encoding='utf-8', index=False)
+
+            save_2_DB(db)
+            os.remove(cwd)
+
+    print("download finished!")
 
 
 if __name__ == '__main__':
