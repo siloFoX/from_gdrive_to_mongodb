@@ -64,7 +64,7 @@ def insertData(reader, collection):
                               upsert=True) 
 
 def save_2_DB (db) :
-    with open('store_image/collection_allocate.json', encoding = 'UTF-8') as f :
+    with open('collection_allocate.json', encoding = 'UTF-8') as f :
         collections = json.load(f)
 
     collection_list = []
